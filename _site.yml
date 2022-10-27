@@ -9,6 +9,8 @@ navbar:
       href: https://www.linkedin.com/in/shodai/
     - icon: fa-github fa-lg
       href: http://github.com/shodaiinose/
+    - icon: fa-envelope fa-lg
+      href: mailto:<si2426@cumc.columbia.edu>
 
       
 output:
