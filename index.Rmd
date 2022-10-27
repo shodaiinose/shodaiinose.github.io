@@ -6,8 +6,6 @@ output:
     toc_float: true
 ---
 
-# Welcome to Shodai's Professional Website
-
 Please use this page to learn more about me. 
 
 
