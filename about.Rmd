@@ -8,4 +8,8 @@ output:
 ---
 <img src = "images/headshot.png" width = "200" >
 
-Hi! My name is Shodai Inose and I am a first year MS Biostatistics student at Columbia University's Mailman School of Public Health. I graduated from McGill University with a bachelor's degree in Statistics in 2021. 
+Hi! My name is Shodai Inose and I am a first year MS Biostatistics student at Columbia University's Mailman School of Public Health. I am currently based in New York, NY. 
+
+I graduated from McGill University with a bachelor's degree in Statistics in 2021 and spent a year working in consulting.
+
+Please feel free to reach out to me via LinkedIn or take a look at my GitHub profile.
