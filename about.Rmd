@@ -4,6 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    theme: sandstone
 ---
 <img src = "images/headshot.png" width = "200" >
 
