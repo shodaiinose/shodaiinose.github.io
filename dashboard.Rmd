@@ -16,7 +16,7 @@ library(flexdashboard)
 data("instacart")
 ```
 
-Column {data-width=650}
+Column {data-width=500}
 -----------------------------------------------------------------------
 
 ### Chart A
