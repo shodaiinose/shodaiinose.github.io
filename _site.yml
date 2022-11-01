@@ -5,8 +5,10 @@ navbar:
   right:
     - text: "About"
       href: about.html
-    - text: "Dashboard"
-      href: dashboard.html
+    - text: Projects
+      menu:
+      - text: "Instacart Dashboard (2017)"
+        href: dashboard.html
     - icon: fa-brands fa-linkedin
       href: https://www.linkedin.com/in/shodai/
     - icon: fa-github fa-lg
