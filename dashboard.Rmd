@@ -23,6 +23,8 @@ This flexboard is analyzing “The Instacart Online Grocery Shopping Dataset 201
 
 The aim is to identify frequently ordered frozen products and discover any purchase patterns.
 
+Row {data-height = 100}
+-----------------------------------------------------------------------
 Column {data-width=500}
 -----------------------------------------------------------------------
 
