@@ -10,13 +10,17 @@ output:
 
 <style>
 body {
-text-align: justify}
+text-align: justify
+}
 </style>
 
-Hi! My name is Shodai Inose and I am a first year MS Biostatistics student at Columbia University's Mailman School of Public Health. I am currently based in New York, NY and looking for part-time opportunities during the school year and full-time internship opportunities during the summer.
+Hi! My name is Shodai Inose and I am a first year MS Biostatistics student at Columbia University's Mailman School of Public Health. I am currently based in New York, NY and looking for part-time opportunities during the school year and full-time internship opportunities during the summer. I graduated from McGill University with a bachelor's degree in Statistics in 2021 and spent a year working in consulting.
 
-I graduated from McGill University with a bachelor's degree in Statistics in 2021 and spent a year working in consulting.
+<style>
+body {
+text-align: justify
+}
+</style>
 
-If you would like to learn more about my experiences, here is a copy of my [resume](documents/resume.pdf) (updated October 2022). 
+If you would like to learn more about my experiences, here is a copy of my [resume](documents/resume.pdf) (updated October 2022). Please feel free to reach out to me via LinkedIn or take a look at my GitHub profile if you have any questions.
 
-Please feel free to reach out to me via LinkedIn or take a look at my GitHub profile if you have any questions.
