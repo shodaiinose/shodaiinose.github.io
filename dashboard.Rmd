@@ -15,6 +15,13 @@ library(flexdashboard)
 
 data("instacart")
 ```
+Column {.tabset}
+-----------------------------------------------------------------------
+### Introduction
+
+This flexboard is analyzing “The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on November 1, 2022.
+
+The aim is to identify frequently ordered frozen products and discover any purchase patterns.
 
 Column {data-width=500}
 -----------------------------------------------------------------------
@@ -33,7 +40,7 @@ frozen_instacart %>%
   mutate(product_name = fct_reorder(product_name, n)) %>%
     plot_ly(
       x = ~product_name, y = ~n, color = ~product_name, type = "bar", colors = "viridis") %>%
-  layout(title = 'What Are the Most Popular Frozen Foods New Yorkers are Ordering?', xaxis = list(title = "Product"), yaxis = list(title = "Count")) %>% hide_legend()
+  layout(title = 'What Frozen Foods New Yorkers are Ordering?', xaxis = list(title = "Product"), yaxis = list(title = "Count")) %>% hide_legend()
 ```
 
 Column {data-width=350}
@@ -60,6 +67,12 @@ plot_ly(data = frozen_instacart_time, x = ~order_hour_of_day, y = ~count, color 
 
 ```
 
-Citation: 
-“The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on <date>
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### Citations
+
+“The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on November 1, 2022.
+
+
 
