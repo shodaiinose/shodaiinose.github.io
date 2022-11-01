@@ -1,0 +1,68 @@
+---
+title: "Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    source_code: embed
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+library(plotly)
+library(flexdashboard)
+
+data("instacart")
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+frozen_instacart = instacart %>% 
+  filter(department == 'frozen') %>% 
+  add_count(product_name) %>% 
+  filter(n >= 400)
+
+frozen_instacart %>% 
+  count(product_name) %>%
+  mutate(product_name = as.character(product_name)) %>%
+  mutate(product_name = fct_reorder(product_name, n)) %>%
+    plot_ly(
+      x = ~product_name, y = ~n, color = ~product_name, type = "bar", colors = "viridis") %>%
+  layout(title = 'What Are the Most Popular Frozen Foods New Yorkers are Ordering?', xaxis = list(title = "Product"), yaxis = list(title = "Count")) %>% hide_legend()
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r, echo = FALSE}
+frozen_instacart %>% 
+  mutate(product_name = fct_reorder(product_name, days_since_prior_order)) %>% 
+  plot_ly(y = ~days_since_prior_order, color = ~product_name, type = "box", colors = "viridis") %>%
+  layout(
+    title = 'How Often Are New Yorkers Ordering Their Favorite Frozen Foods?', xaxis = list(title = "Product"), yaxis = list(title = "Days Since Prior Order")) %>% hide_legend()
+```
+
+### Chart C
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+frozen_instacart_time = frozen_instacart %>% group_by(product_name, order_hour_of_day) %>% summarize(count = n())
+
+plot_ly(data = frozen_instacart_time, x = ~order_hour_of_day, y = ~count, color = ~product_name, mode = 'lines') %>%
+  layout(
+    title = 'When Are New Yorkers Ordering Their Favorite Frozen Foods?', xaxis = list(title = "Hour (Military Time)"), yaxis = list(title = "Number of Products Ordered"))
+
+```
+
+Citation: 
+“The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on <date>
+
+
+
+
