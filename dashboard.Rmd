@@ -68,7 +68,7 @@ About {data-icon="fa-info"}
 =====================================   
 ### Introduction
 
-This flexboard is analyzing “The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on November 1, 2022.
+These dashboards are analyzing “The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on November 1, 2022.
 
 The aim is to identify frequently ordered frozen products and discover any purchase patterns.
 
