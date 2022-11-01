@@ -6,6 +6,12 @@ output:
     vertical_layout: fill
     source_code: embed
 ---
+```{css my-style, echo = FALSE}
+
+.chart-wrapper .chart-stage {
+    overflow: auto;
+}
+```
 
 ```{r, include = FALSE}
 library(tidyverse)
