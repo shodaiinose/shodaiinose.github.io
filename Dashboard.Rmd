@@ -63,6 +63,3 @@ plot_ly(data = frozen_instacart_time, x = ~order_hour_of_day, y = ~count, color 
 Citation: 
 “The Instacart Online Grocery Shopping Dataset 2017”, Accessed from https://www.instacart.com/datasets/grocery-shopping-2017 on <date>
 
-
-
-
