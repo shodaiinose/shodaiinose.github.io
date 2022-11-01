@@ -46,7 +46,7 @@ frozen_instacart %>%
   mutate(product_name = fct_reorder(product_name, days_since_prior_order)) %>% 
   plot_ly(y = ~days_since_prior_order, color = ~product_name, type = "box", colors = "viridis") %>%
   layout(
-    title = 'How Often Are New Yorkers Ordering Their Favorite Frozen Foods?', xaxis = list(title = "Product"), yaxis = list(title = "Days Since Prior Order")) %>% hide_legend()
+    title = 'How Often Are New Yorkers Ordering Their Favorite Frozen Foods?', xaxis = list(title = "Product"), yaxis = list(title = "Days Between Orders")) %>% hide_legend()
 ```
 
 ### Chart C
