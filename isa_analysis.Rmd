@@ -1,0 +1,159 @@
+---
+title: "ISA (Spotify Analysis)"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: sandstone
+---
+
+```{r, include = FALSE}
+library(spotifyr)
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(purrr)
+library(tidyquant)
+library(plotly)
+library(lubridate)
+```
+
+## Using [spotifyr](https://github.com/charlie86/spotifyr) to analyze an ISA's Spotify catalogue.
+
+Here is some exploratory analysis I will be running on my favorite artist's Spotify discography (updated November 2022). ISA (Isa Tengblad) is an independent Swedish recording artist. As the page is still quite new, I will be periodically creating updates.
+
+## ISA's Happiest and Saddest Songs
+
+First, let's take a look at ISA's overall discography. We will begin by looking at valence (a measure of cheerfulness or happiness)^[https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404#:~:text=Valence%3A%20Describes%20the%20musical%20positiveness,sad%2C%20depressed%2C%20angry).] to determine which of her songs are the "happiest" and the "saddest." The term "valence" will be interchanged with "happiness" throughout this report.
+
+### ISA's Happiest Songs
+```{r, echo = FALSE, message = FALSE}
+ISA <- tibble(get_artist_audio_features('25TgcWHKIx5DuoHjECQC2s', include_groups = c("album", "single")) %>% arrange(desc(album_release_date)) %>%
+  distinct(track_name, .keep_all = TRUE))
+
+ISA %>% 
+  select(track_name, valence) %>% 
+  arrange(-valence) %>%
+  head(5) %>%
+  rename("Track Name" = track_name, "Valence" = valence) %>%
+  kable()
+```
+
+### ISA's Saddest Songs
+```{r, echo = FALSE}
+ISA %>% 
+  select(track_name, valence) %>% 
+  arrange(valence) %>%
+  rename("Track Name" = track_name, "Valence" = valence) %>%
+  head(5) %>%
+  kable()
+```
+
+## ISA's Musical Valence Over Time
+
+I will now look at ISA's musical valence over time to identify any patterns.
+```{r, echo = FALSE, warning = FALSE}
+ISA_reorder <- tibble(
+  get_artist_audio_features('25TgcWHKIx5DuoHjECQC2s', include_groups = c("album", "single")) %>%
+  arrange((album_release_date)) %>%
+  distinct(track_name, .keep_all = TRUE)) %>%
+  mutate(album_release_date = as.Date(album_release_date))
+
+valence_plot <- plot_ly(ISA_reorder, type = 'scatter', mode = 'lines') %>%
+  add_trace(x = ~album_release_date, y = ~valence) %>% 
+  layout(showlegend = F, title = "ISA's Musical Valence Over Time",
+         xaxis = list(title = "Release Date", rangeslider = list(visible = T),
+                      rangeselector = list(
+                        buttons = list(
+                          list(count = 1, label = "1m", step = "month", stepmode = "backward"),
+                          list(count = 6, label = "6m", step = "month", stepmode = "backward"),
+                          list(count = 1, label = "YTD", step = "year", stepmode = "todate"),
+                          list(count = 1, label = "1y", step = "year", stepmode = "backward"),
+                          list(step = "all")
+                        ))), yaxis = list(title = "Valence"))
+  
+
+valence_plot <- valence_plot %>%
+  layout(
+         xaxis = list(zerolinecolor = 'gggg',
+                      zerolinewidth = 2,
+                      gridcolor = 'gggg'),
+         yaxis = list(zerolinecolor = '#gggg',
+                      zerolinewidth = 2,
+                      gridcolor = 'gggg'), width = 900)
+
+valence_plot
+```
+
+ISA's musical valence has gone through several ups and downs. Her musical valence appears to have reached its lowest levels between 2018 and 2019. ISA didn't release very many "happy" songs between mid 2015 and mid 2019. On a positive note, it appears that her musical valence has been trending higher due to her past few releases. 
+
+## Principal Component Analysis
+
+I will now be running principal component analysis to look at how variables such as danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo, and time signature vary across ISA's discography.
+
+```{r, echo = FALSE, warning = FALSE}
+library(stats)
+
+isa_subset <- subset(ISA, select = c("danceability", "energy", "loudness", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "time_signature"))
+
+prin_comp <- prcomp(isa_subset, rank = 2)
+components <- prin_comp[["x"]]
+components <- data.frame(components)
+components <- cbind(components, ISA$track_name)
+components$PC2 <- -components$PC2
+explained_variance <- summary(prin_comp)[["sdev"]]
+explained_variance <- explained_variance[1:2]
+comp <- prin_comp[["rotation"]]
+comp[,'PC2'] <- -comp[,'PC2']
+loadings <- comp
+for (i in seq(explained_variance)){
+  loadings[,i] <- comp[,i] * explained_variance[i]
+}
+
+features = c("danceability", "energy", "loudness", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "time_signature")
+
+pc_figure <- plot_ly(components, x = ~PC1, y = ~PC2, color = ~ISA$track_name, type = 'scatter', mode = 'markers') %>%
+  layout(
+    legend = list(title = list(text = 'color')),
+    xaxis = list(
+      title = "0"),
+    yaxis = list(
+      title = "1"))
+for (i in seq(10)){
+  pc_figure <- pc_figure %>%
+    add_segments(x = 0, xend = loadings[i, 1], y = 0, yend = loadings[i, 2], line = list(color = 'black'),inherit = FALSE, showlegend = FALSE) %>%
+    add_annotations(x = loadings[i, 1], y = loadings[i, 2], ax = 0, ay = 0,text = features[i], xanchor = 'center', yanchor = 'bottom')
+} 
+
+pc_figure %>% hide_legend()
+```
+
+According to the principal component analysis, songs that are high in acousticness, speechiness, and instrumentalness are grouped towards the positive y-direction. Songs with high danceability, energy, valence, liveness, and loudness are grouped towards the negative y-direction. Songs with high tempo are grouped towards the positive x-direction while those with low tempo are grouped towards the negative x-direction. Looking at the plot, a song like "Who the Hell" is high in tempo while "Message to the Old Me" is low in tempo. A song like "Too Late To Love" is high in loudness with an average tempo.
+
+## Anxiety Boulevard Analyzed
+
+I will take a deeper look at ISA's latest EP -- Anxiety Boulevard:
+```{r, echo = FALSE}
+anxiety_boulevard = ISA %>%
+  filter(album_name == "Anxiety Boulevard") 
+
+anxiety_boulevard %>%
+  dplyr::select("track_name", "energy", "valence", "tempo", "duration_ms") %>% 
+  mutate(duration_ms = round(duration_ms/1000/60, 2)) %>%
+  rename("Track Name" = track_name, "Valence" = valence, "Energy" = energy, "Tempo" = tempo, "Duration (Minutes)" = duration_ms) %>%
+  kable()
+
+anxiety_boulevard_plot <- plot_ly(anxiety_boulevard, x = ~energy, y = ~track_name, name = "Energy", type = 'scatter',
+             mode = "markers", marker = list(color = "red"))
+anxiety_boulevard_plot <- anxiety_boulevard_plot %>% add_trace(x = ~valence, y = ~track_name, name = "Valence",type = 'scatter',
+            mode = "markers", marker = list(color = "gold"))
+anxiety_boulevard_plot <- anxiety_boulevard_plot %>% layout(
+    xaxis = list(title = ""), yaxis = list(title = ""))
+
+anxiety_boulevard_plot
+```
+According to the analysis, "Nobody Said" has the highest energy and tempo while "BLEED" is the happiest song. On the other hand, "Happy Again" is, ironically, the least happy song on the EP.
+
+I also plotted the energy and valence levels for each song on the EP. It is interesting to note that "BLEED" has a very high valence but low energy.
+
+A big thank you to [spotifyr](https://github.com/charlie86/spotifyr) for making this analysis possible.

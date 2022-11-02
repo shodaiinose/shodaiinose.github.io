@@ -72,3 +72,5 @@ These dashboards are analyzing “The Instacart Online Grocery Shopping Dataset 
 
 The aim is to identify frequently ordered frozen products and discover any purchase patterns.
 
+Note: this analysis is only looking at products that had over 400 purchases in the timeframe.
+

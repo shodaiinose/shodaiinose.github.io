@@ -7,6 +7,6 @@ output:
 ---
 <img src = "images/cheesecake.jpg" width = "400" >
 
-Please use this website to learn more about me! I will be posting some current projects.
+Please use this website to learn more about me! I will be posting (and updating) some projects.
 
 

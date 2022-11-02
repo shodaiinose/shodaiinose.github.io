@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>ISA (Spotify Analysis)</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Projects
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="dashboard.html">Instacart Dashboard (2017)</a>
+    </li>
+    <li>
+      <a href="isa_analysis.html">Spotify Data Analysis (ISA)</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/shodai/">
+    <span class="fa fa-brands fa-linkedin"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/shodaiinose/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="mailto:&lt;si2426@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ISA (Spotify Analysis)</h1>
+
+</div>
+
+
+<div id="using-spotifyr-to-analyze-an-isas-spotify-catalogue."
+class="section level2">
+<h2>Using <a href="https://github.com/charlie86/spotifyr">spotifyr</a>
+to analyze an ISA’s Spotify catalogue.</h2>
+<p>Here is some exploratory analysis I will be running on my favorite
+artist’s Spotify discography (updated November 2022). ISA (Isa Tengblad)
+is an independent Swedish recording artist. As the page is still quite
+new, I will be periodically creating updates.</p>
+</div>
+<div id="isas-happiest-and-saddest-songs" class="section level2">
+<h2>ISA’s Happiest and Saddest Songs</h2>
+<p>First, let’s take a look at ISA’s overall discography. We will begin
+by looking at valence (a measure of cheerfulness or happiness)<a
+href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> to
+determine which of her songs are the “happiest” and the “saddest.” The
+term “valence” will be interchanged with “happiness” throughout this
+report.</p>
+<div id="isas-happiest-songs" class="section level3">
+<h3>ISA’s Happiest Songs</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Track Name</th>
+<th align="right">Valence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Gravity</td>
+<td align="right">0.943</td>
+</tr>
+<tr class="even">
+<td align="left">Who the Hell</td>
+<td align="right">0.926</td>
+</tr>
+<tr class="odd">
+<td align="left">BLEED</td>
+<td align="right">0.924</td>
+</tr>
+<tr class="even">
+<td align="left">Don’t Stop</td>
+<td align="right">0.856</td>
+</tr>
+<tr class="odd">
+<td align="left">Got Me Good</td>
+<td align="right">0.844</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="isas-saddest-songs" class="section level3">
+<h3>ISA’s Saddest Songs</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Track Name</th>
+<th align="right">Valence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LOVE IN THE WORLD</td>
+<td align="right">0.175</td>
+</tr>
+<tr class="even">
+<td align="left">Perfect</td>
+<td align="right">0.193</td>
+</tr>
+<tr class="odd">
+<td align="left">Settle on Love (Real)</td>
+<td align="right">0.215</td>
+</tr>
+<tr class="even">
+<td align="left">Me Too</td>
+<td align="right">0.238</td>
+</tr>
+<tr class="odd">
+<td align="left">Conversation</td>
+<td align="right">0.245</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="isas-musical-valence-over-time" class="section level2">
+<h2>ISA’s Musical Valence Over Time</h2>
+<p>I will now look at ISA’s musical valence over time to identify any
+patterns.</p>
+<div id="htmlwidget-a1bab0a89ab71716b292" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a1bab0a89ab71716b292">{"x":{"visdat":{"afc02bb75954":["function () ","plotlyVisDat"]},"cur_data":"afc02bb75954","attrs":{"afc02bb75954":{"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"afc02bb75954.1":{"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","x":{},"y":{},"inherit":true}},"layout":{"width":900,"margin":{"b":40,"l":60,"t":25,"r":10},"showlegend":false,"title":"ISA's Musical Valence Over Time","xaxis":{"domain":[0,1],"automargin":true,"title":"Release Date","rangeslider":{"visible":true},"rangeselector":{"buttons":[{"count":1,"label":"1m","step":"month","stepmode":"backward"},{"count":6,"label":"6m","step":"month","stepmode":"backward"},{"count":1,"label":"YTD","step":"year","stepmode":"todate"},{"count":1,"label":"1y","step":"year","stepmode":"backward"},{"step":"all"}]},"zerolinecolor":"gggg","zerolinewidth":2,"gridcolor":"gggg"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Valence","zerolinecolor":"#gggg","zerolinewidth":2,"gridcolor":"gggg"},"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"mode":"lines","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","type":"scatter","x":["2012-06-12","2014-01-01","2015-03-01","2015-05-08","2015-05-08","2015-05-08","2015-05-08","2015-05-08","2015-08-21","2015-11-27","2016-02-13","2016-05-20","2017-06-02","2017-10-27","2017-11-17","2017-12-15","2018-01-05","2018-02-23","2018-03-23","2018-09-14","2018-12-14","2019-01-11","2019-03-08","2019-04-26","2019-05-03","2019-05-10","2019-05-17","2019-05-24","2019-05-24","2019-05-24","2019-05-24","2019-05-24","2019-11-22","2020-01-17","2020-03-27","2020-05-22","2020-07-03","2020-09-04","2020-09-04","2020-09-04","2020-09-04","2020-09-04","2020-09-04","2020-10-16","2020-11-20","2021-01-08","2021-02-26","2021-04-02","2022-06-03","2022-07-22","2022-08-26","2022-09-16","2022-10-07","2022-10-28"],"y":[0.715,0.388,0.911,0.591,0.286,0.844,0.465,0.662,0.471,0.543,0.274,0.471,0.705,0.564,0.238,0.48,0.193,0.361,0.618,0.621,0.37,0.676,0.27,0.384,0.423,0.64,0.245,0.215,0.315,0.512,0.334,0.175,0.926,0.815,0.943,0.648,0.731,0.664,0.598,0.651,0.261,0.463,0.467,0.351,0.364,0.378,0.703,0.64,0.359,0.826,0.615,0.606,0.595,0.924],"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>ISA’s musical valence has gone through several ups and downs. Her
+musical valence appears to have reached its lowest levels between 2018
+and 2019. ISA didn’t release very many “happy” songs between mid 2015
+and mid 2019. On a positive note, it appears that her musical valence
+has been trending higher due to her past few releases.</p>
+</div>
+<div id="principal-component-analysis" class="section level2">
+<h2>Principal Component Analysis</h2>
+<p>I will now be running principal component analysis to look at how
+variables such as danceability, energy, loudness, speechiness,
+acousticness, instrumentalness, liveness, valence, tempo, and time
+signature vary across ISA’s discography.</p>
+<div id="htmlwidget-5a4e42bac67f27791117" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5a4e42bac67f27791117">{"x":{"visdat":{"afc023d035e9":["function () ","plotlyVisDat"]},"cur_data":"afc023d035e9","attrs":{"afc023d035e9":{"x":{},"y":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"afc023d035e9.1":{"x":0,"y":0,"xend":-0.0310370974029459,"yend":-0.00382507227166792,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.2":{"x":0,"y":0,"xend":0.0170042592775909,"yend":-0.0969130046042912,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.3":{"x":0,"y":0,"xend":0.134243861659083,"yend":-1.7202021724493,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.4":{"x":0,"y":0,"xend":0.0180035697851047,"yend":0.00484049463053636,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.5":{"x":0,"y":0,"xend":-0.0100123339041962,"yend":0.0665656552431529,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.6":{"x":0,"y":0,"xend":-2.50871591327726e-05,"yend":-1.4004281240276e-05,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.7":{"x":0,"y":0,"xend":0.00126734070735985,"yend":-0.02605269403808,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.8":{"x":0,"y":0,"xend":0.00589492434880267,"yend":-0.0702342848392098,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.9":{"x":0,"y":0,"xend":23.7611853034208,"yend":0.00981918424420247,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false},"afc023d035e9.10":{"x":0,"y":0,"xend":-0.0391509772273263,"yend":-0.00425826648434461,"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"inherit":false}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"legend":{"title":{"text":"color"}},"xaxis":{"domain":[0,1],"automargin":true,"title":"0"},"yaxis":{"domain":[0,1],"automargin":true,"title":"1"},"annotations":[{"text":"danceability","x":-0.0310370974029459,"y":-0.00382507227166792,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"energy","x":0.0170042592775909,"y":-0.0969130046042912,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"loudness","x":0.134243861659083,"y":-1.7202021724493,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"speechiness","x":0.0180035697851047,"y":0.00484049463053636,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"acousticness","x":-0.0100123339041962,"y":0.0665656552431529,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"instrumentalness","x":-2.50871591327726e-05,"y":-1.4004281240276e-05,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"liveness","x":0.00126734070735985,"y":-0.02605269403808,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"valence","x":0.00589492434880267,"y":-0.0702342848392098,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"tempo","x":23.7611853034208,"y":0.00981918424420247,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"},{"text":"time_signature","x":-0.0391509772273263,"y":-0.00425826648434461,"ax":0,"ay":0,"xanchor":"center","yanchor":"bottom"}],"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},".hideLegend":true,"data":[{"x":[-10.859077360962],"y":[5.22578908815491],"mode":"markers","type":"scatter","name":"After You","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-13.7025247614781],"y":[0.153226391924261],"mode":"markers","type":"scatter","name":"BLEED","marker":{"color":"rgba(134,189,156,1)","line":{"color":"rgba(134,189,156,1)"}},"textfont":{"color":"rgba(134,189,156,1)"},"error_y":{"color":"rgba(134,189,156,1)"},"error_x":{"color":"rgba(134,189,156,1)"},"line":{"color":"rgba(134,189,156,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[3.18435172497482],"y":[2.19072807772527],"mode":"markers","type":"scatter","name":"Bleeding Love","marker":{"color":"rgba(158,183,147,1)","line":{"color":"rgba(158,183,147,1)"}},"textfont":{"color":"rgba(158,183,147,1)"},"error_y":{"color":"rgba(158,183,147,1)"},"error_x":{"color":"rgba(158,183,147,1)"},"line":{"color":"rgba(158,183,147,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[11.3299941748337],"y":[-2.79647232819182],"mode":"markers","type":"scatter","name":"Bomb","marker":{"color":"rgba(179,177,138,1)","line":{"color":"rgba(179,177,138,1)"}},"textfont":{"color":"rgba(179,177,138,1)"},"error_y":{"color":"rgba(179,177,138,1)"},"error_x":{"color":"rgba(179,177,138,1)"},"line":{"color":"rgba(179,177,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1.26924305207165],"y":[3.07565320995374],"mode":"markers","type":"scatter","name":"Bye Bye","marker":{"color":"rgba(197,170,129,1)","line":{"color":"rgba(197,170,129,1)"}},"textfont":{"color":"rgba(197,170,129,1)"},"error_y":{"color":"rgba(197,170,129,1)"},"error_x":{"color":"rgba(197,170,129,1)"},"line":{"color":"rgba(197,170,129,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[1.33556871177439],"y":[-1.52017613228155],"mode":"markers","type":"scatter","name":"Bye Bye - Live","marker":{"color":"rgba(214,163,121,1)","line":{"color":"rgba(214,163,121,1)"}},"textfont":{"color":"rgba(214,163,121,1)"},"error_y":{"color":"rgba(214,163,121,1)"},"error_x":{"color":"rgba(214,163,121,1)"},"line":{"color":"rgba(214,163,121,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[7.20121474773902],"y":[1.38313742063067],"mode":"markers","type":"scatter","name":"Conversation","marker":{"color":"rgba(229,155,112,1)","line":{"color":"rgba(229,155,112,1)"}},"textfont":{"color":"rgba(229,155,112,1)"},"error_y":{"color":"rgba(229,155,112,1)"},"error_x":{"color":"rgba(229,155,112,1)"},"line":{"color":"rgba(229,155,112,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-8.74019307777309],"y":[0.32027661369802],"mode":"markers","type":"scatter","name":"Craving","marker":{"color":"rgba(244,146,103,1)","line":{"color":"rgba(244,146,103,1)"}},"textfont":{"color":"rgba(244,146,103,1)"},"error_y":{"color":"rgba(244,146,103,1)"},"error_x":{"color":"rgba(244,146,103,1)"},"line":{"color":"rgba(244,146,103,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-8.6979016981925],"y":[-1.81664170695303],"mode":"markers","type":"scatter","name":"Craving - Live","marker":{"color":"rgba(247,142,104,1)","line":{"color":"rgba(247,142,104,1)"}},"textfont":{"color":"rgba(247,142,104,1)"},"error_y":{"color":"rgba(247,142,104,1)"},"error_x":{"color":"rgba(247,142,104,1)"},"line":{"color":"rgba(247,142,104,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-8.68648003922732],"y":[0.912246808113155],"mode":"markers","type":"scatter","name":"Do What You Want","marker":{"color":"rgba(236,145,118,1)","line":{"color":"rgba(236,145,118,1)"}},"textfont":{"color":"rgba(236,145,118,1)"},"error_y":{"color":"rgba(236,145,118,1)"},"error_x":{"color":"rgba(236,145,118,1)"},"line":{"color":"rgba(236,145,118,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-8.47608732467905],"y":[-1.7754777878452],"mode":"markers","type":"scatter","name":"Do What You Want - Live","marker":{"color":"rgba(225,148,132,1)","line":{"color":"rgba(225,148,132,1)"}},"textfont":{"color":"rgba(225,148,132,1)"},"error_y":{"color":"rgba(225,148,132,1)"},"error_x":{"color":"rgba(225,148,132,1)"},"line":{"color":"rgba(225,148,132,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[39.3440387249917],"y":[-2.18126817719455],"mode":"markers","type":"scatter","name":"Don't Stop","marker":{"color":"rgba(212,151,146,1)","line":{"color":"rgba(212,151,146,1)"}},"textfont":{"color":"rgba(212,151,146,1)"},"error_y":{"color":"rgba(212,151,146,1)"},"error_x":{"color":"rgba(212,151,146,1)"},"line":{"color":"rgba(212,151,146,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[10.1813972585873],"y":[-0.564722369517251],"mode":"markers","type":"scatter","name":"Drum & Bass","marker":{"color":"rgba(198,153,160,1)","line":{"color":"rgba(198,153,160,1)"}},"textfont":{"color":"rgba(198,153,160,1)"},"error_y":{"color":"rgba(198,153,160,1)"},"error_x":{"color":"rgba(198,153,160,1)"},"line":{"color":"rgba(198,153,160,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-13.7207753740747],"y":[-1.34116566214209],"mode":"markers","type":"scatter","name":"Ego","marker":{"color":"rgba(183,155,174,1)","line":{"color":"rgba(183,155,174,1)"}},"textfont":{"color":"rgba(183,155,174,1)"},"error_y":{"color":"rgba(183,155,174,1)"},"error_x":{"color":"rgba(183,155,174,1)"},"line":{"color":"rgba(183,155,174,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[8.36534981171811],"y":[-1.50275426675758],"mode":"markers","type":"scatter","name":"Girl You Lost","marker":{"color":"rgba(165,158,187,1)","line":{"color":"rgba(165,158,187,1)"}},"textfont":{"color":"rgba(165,158,187,1)"},"error_y":{"color":"rgba(165,158,187,1)"},"error_x":{"color":"rgba(165,158,187,1)"},"line":{"color":"rgba(165,158,187,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[11.2762082576288],"y":[-2.48888885180981],"mode":"markers","type":"scatter","name":"Got Me Good","marker":{"color":"rgba(144,160,201,1)","line":{"color":"rgba(144,160,201,1)"}},"textfont":{"color":"rgba(144,160,201,1)"},"error_y":{"color":"rgba(144,160,201,1)"},"error_x":{"color":"rgba(144,160,201,1)"},"line":{"color":"rgba(144,160,201,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-11.6537440624015],"y":[-0.293284608157669],"mode":"markers","type":"scatter","name":"Gravity","marker":{"color":"rgba(153,158,202,1)","line":{"color":"rgba(153,158,202,1)"}},"textfont":{"color":"rgba(153,158,202,1)"},"error_y":{"color":"rgba(153,158,202,1)"},"error_x":{"color":"rgba(153,158,202,1)"},"line":{"color":"rgba(153,158,202,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-31.3221203958352],"y":[0.618638444162132],"mode":"markers","type":"scatter","name":"Happy Again","marker":{"color":"rgba(166,156,201,1)","line":{"color":"rgba(166,156,201,1)"}},"textfont":{"color":"rgba(166,156,201,1)"},"error_y":{"color":"rgba(166,156,201,1)"},"error_x":{"color":"rgba(166,156,201,1)"},"line":{"color":"rgba(166,156,201,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[49.3054307134959],"y":[0.389511996195673],"mode":"markers","type":"scatter","name":"I Will Wait","marker":{"color":"rgba(179,153,200,1)","line":{"color":"rgba(179,153,200,1)"}},"textfont":{"color":"rgba(179,153,200,1)"},"error_y":{"color":"rgba(179,153,200,1)"},"error_x":{"color":"rgba(179,153,200,1)"},"line":{"color":"rgba(179,153,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-13.6054230988286],"y":[-0.683970879765014],"mode":"markers","type":"scatter","name":"I.S.A","marker":{"color":"rgba(191,150,199,1)","line":{"color":"rgba(191,150,199,1)"}},"textfont":{"color":"rgba(191,150,199,1)"},"error_y":{"color":"rgba(191,150,199,1)"},"error_x":{"color":"rgba(191,150,199,1)"},"line":{"color":"rgba(191,150,199,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-29.9996743833667],"y":[0.579880224141018],"mode":"markers","type":"scatter","name":"I.S.A - Acoustic Version","marker":{"color":"rgba(202,147,198,1)","line":{"color":"rgba(202,147,198,1)"}},"textfont":{"color":"rgba(202,147,198,1)"},"error_y":{"color":"rgba(202,147,198,1)"},"error_x":{"color":"rgba(202,147,198,1)"},"line":{"color":"rgba(202,147,198,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-18.3658792371825],"y":[0.520696428151661],"mode":"markers","type":"scatter","name":"In My Head","marker":{"color":"rgba(213,144,197,1)","line":{"color":"rgba(213,144,197,1)"}},"textfont":{"color":"rgba(213,144,197,1)"},"error_y":{"color":"rgba(213,144,197,1)"},"error_x":{"color":"rgba(213,144,197,1)"},"line":{"color":"rgba(213,144,197,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-16.6847498234005],"y":[-0.281834870600778],"mode":"markers","type":"scatter","name":"Know Me Better","marker":{"color":"rgba(224,141,196,1)","line":{"color":"rgba(224,141,196,1)"}},"textfont":{"color":"rgba(224,141,196,1)"},"error_y":{"color":"rgba(224,141,196,1)"},"error_x":{"color":"rgba(224,141,196,1)"},"line":{"color":"rgba(224,141,196,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[3.33738900525442],"y":[0.468491929482923],"mode":"markers","type":"scatter","name":"Let It Kill You","marker":{"color":"rgba(229,142,191,1)","line":{"color":"rgba(229,142,191,1)"}},"textfont":{"color":"rgba(229,142,191,1)"},"error_y":{"color":"rgba(229,142,191,1)"},"error_x":{"color":"rgba(229,142,191,1)"},"line":{"color":"rgba(229,142,191,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[23.2975487123075],"y":[0.650750330709248],"mode":"markers","type":"scatter","name":"Light On","marker":{"color":"rgba(223,154,178,1)","line":{"color":"rgba(223,154,178,1)"}},"textfont":{"color":"rgba(223,154,178,1)"},"error_y":{"color":"rgba(223,154,178,1)"},"error_x":{"color":"rgba(223,154,178,1)"},"line":{"color":"rgba(223,154,178,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-6.77517668412642],"y":[3.5160093333888],"mode":"markers","type":"scatter","name":"LOVE IN THE WORLD","marker":{"color":"rgba(217,165,165,1)","line":{"color":"rgba(217,165,165,1)"}},"textfont":{"color":"rgba(217,165,165,1)"},"error_y":{"color":"rgba(217,165,165,1)"},"error_x":{"color":"rgba(217,165,165,1)"},"line":{"color":"rgba(217,165,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[8.36488230008889],"y":[2.64006185714952],"mode":"markers","type":"scatter","name":"Me Too","marker":{"color":"rgba(209,175,151,1)","line":{"color":"rgba(209,175,151,1)"}},"textfont":{"color":"rgba(209,175,151,1)"},"error_y":{"color":"rgba(209,175,151,1)"},"error_x":{"color":"rgba(209,175,151,1)"},"line":{"color":"rgba(209,175,151,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-23.5883531196968],"y":[1.20389993421789],"mode":"markers","type":"scatter","name":"Memories On Replay","marker":{"color":"rgba(201,185,137,1)","line":{"color":"rgba(201,185,137,1)"}},"textfont":{"color":"rgba(201,185,137,1)"},"error_y":{"color":"rgba(201,185,137,1)"},"error_x":{"color":"rgba(201,185,137,1)"},"line":{"color":"rgba(201,185,137,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-39.1781810454132],"y":[0.979265270702854],"mode":"markers","type":"scatter","name":"Message to the old me","marker":{"color":"rgba(192,195,122,1)","line":{"color":"rgba(192,195,122,1)"}},"textfont":{"color":"rgba(192,195,122,1)"},"error_y":{"color":"rgba(192,195,122,1)"},"error_x":{"color":"rgba(192,195,122,1)"},"line":{"color":"rgba(192,195,122,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-20.9734905126233],"y":[-1.19016985671018],"mode":"markers","type":"scatter","name":"Never Change","marker":{"color":"rgba(181,204,106,1)","line":{"color":"rgba(181,204,106,1)"}},"textfont":{"color":"rgba(181,204,106,1)"},"error_y":{"color":"rgba(181,204,106,1)"},"error_x":{"color":"rgba(181,204,106,1)"},"line":{"color":"rgba(181,204,106,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[37.3693298721615],"y":[-0.672591214007299],"mode":"markers","type":"scatter","name":"Nobody Said","marker":{"color":"rgba(170,213,89,1)","line":{"color":"rgba(170,213,89,1)"}},"textfont":{"color":"rgba(170,213,89,1)"},"error_y":{"color":"rgba(170,213,89,1)"},"error_x":{"color":"rgba(170,213,89,1)"},"line":{"color":"rgba(170,213,89,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[7.26012957187312],"y":[-1.11549818332237],"mode":"markers","type":"scatter","name":"Numb","marker":{"color":"rgba(175,216,81,1)","line":{"color":"rgba(175,216,81,1)"}},"textfont":{"color":"rgba(175,216,81,1)"},"error_y":{"color":"rgba(175,216,81,1)"},"error_x":{"color":"rgba(175,216,81,1)"},"line":{"color":"rgba(175,216,81,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[5.4350373258078],"y":[-0.521248551813329],"mode":"markers","type":"scatter","name":"Oh My","marker":{"color":"rgba(188,217,77,1)","line":{"color":"rgba(188,217,77,1)"}},"textfont":{"color":"rgba(188,217,77,1)"},"error_y":{"color":"rgba(188,217,77,1)"},"error_x":{"color":"rgba(188,217,77,1)"},"line":{"color":"rgba(188,217,77,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[9.31100912020375],"y":[-1.43973813167651],"mode":"markers","type":"scatter","name":"Own You","marker":{"color":"rgba(200,217,73,1)","line":{"color":"rgba(200,217,73,1)"}},"textfont":{"color":"rgba(200,217,73,1)"},"error_y":{"color":"rgba(200,217,73,1)"},"error_x":{"color":"rgba(200,217,73,1)"},"line":{"color":"rgba(200,217,73,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[9.33109168883521],"y":[-2.12346726706045],"mode":"markers","type":"scatter","name":"Own You - Live","marker":{"color":"rgba(212,217,68,1)","line":{"color":"rgba(212,217,68,1)"}},"textfont":{"color":"rgba(212,217,68,1)"},"error_y":{"color":"rgba(212,217,68,1)"},"error_x":{"color":"rgba(212,217,68,1)"},"line":{"color":"rgba(212,217,68,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-6.88422200731694],"y":[-1.38438546806492],"mode":"markers","type":"scatter","name":"Perfect","marker":{"color":"rgba(223,217,63,1)","line":{"color":"rgba(223,217,63,1)"}},"textfont":{"color":"rgba(223,217,63,1)"},"error_y":{"color":"rgba(223,217,63,1)"},"error_x":{"color":"rgba(223,217,63,1)"},"line":{"color":"rgba(223,217,63,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-6.75428387748468],"y":[-2.62787877180441],"mode":"markers","type":"scatter","name":"Perfect - Jacob Tillberg Remix","marker":{"color":"rgba(235,217,58,1)","line":{"color":"rgba(235,217,58,1)"}},"textfont":{"color":"rgba(235,217,58,1)"},"error_y":{"color":"rgba(235,217,58,1)"},"error_x":{"color":"rgba(235,217,58,1)"},"line":{"color":"rgba(235,217,58,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-16.7146739620107],"y":[-0.496467382701283],"mode":"markers","type":"scatter","name":"Pillow","marker":{"color":"rgba(246,217,52,1)","line":{"color":"rgba(246,217,52,1)"}},"textfont":{"color":"rgba(246,217,52,1)"},"error_y":{"color":"rgba(246,217,52,1)"},"error_x":{"color":"rgba(246,217,52,1)"},"line":{"color":"rgba(246,217,52,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[41.2470894304763],"y":[2.91680196138816],"mode":"markers","type":"scatter","name":"RARE","marker":{"color":"rgba(255,217,50,1)","line":{"color":"rgba(255,217,50,1)"}},"textfont":{"color":"rgba(255,217,50,1)"},"error_y":{"color":"rgba(255,217,50,1)"},"error_x":{"color":"rgba(255,217,50,1)"},"line":{"color":"rgba(255,217,50,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-16.6904467758863],"y":[2.12317652685038],"mode":"markers","type":"scatter","name":"Rock My Body","marker":{"color":"rgba(252,214,69,1)","line":{"color":"rgba(252,214,69,1)"}},"textfont":{"color":"rgba(252,214,69,1)"},"error_y":{"color":"rgba(252,214,69,1)"},"error_x":{"color":"rgba(252,214,69,1)"},"line":{"color":"rgba(252,214,69,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[7.30226818626105],"y":[0.840004094504798],"mode":"markers","type":"scatter","name":"Run Out of Love","marker":{"color":"rgba(249,211,84,1)","line":{"color":"rgba(249,211,84,1)"}},"textfont":{"color":"rgba(249,211,84,1)"},"error_y":{"color":"rgba(249,211,84,1)"},"error_x":{"color":"rgba(249,211,84,1)"},"line":{"color":"rgba(249,211,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-39.1583989480162],"y":[-1.42429525265448],"mode":"markers","type":"scatter","name":"Second Chance","marker":{"color":"rgba(246,208,97,1)","line":{"color":"rgba(246,208,97,1)"}},"textfont":{"color":"rgba(246,208,97,1)"},"error_y":{"color":"rgba(246,208,97,1)"},"error_x":{"color":"rgba(246,208,97,1)"},"line":{"color":"rgba(246,208,97,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-27.7387014568485],"y":[0.92226999669783],"mode":"markers","type":"scatter","name":"Settle on Love (Real)","marker":{"color":"rgba(242,205,110,1)","line":{"color":"rgba(242,205,110,1)"}},"textfont":{"color":"rgba(242,205,110,1)"},"error_y":{"color":"rgba(242,205,110,1)"},"error_x":{"color":"rgba(242,205,110,1)"},"line":{"color":"rgba(242,205,110,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[53.2591977246578],"y":[1.86307959509473],"mode":"markers","type":"scatter","name":"Shy","marker":{"color":"rgba(239,203,121,1)","line":{"color":"rgba(239,203,121,1)"}},"textfont":{"color":"rgba(239,203,121,1)"},"error_y":{"color":"rgba(239,203,121,1)"},"error_x":{"color":"rgba(239,203,121,1)"},"line":{"color":"rgba(239,203,121,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[26.3404537797449],"y":[1.21327608021029],"mode":"markers","type":"scatter","name":"SWITCH","marker":{"color":"rgba(235,200,133,1)","line":{"color":"rgba(235,200,133,1)"}},"textfont":{"color":"rgba(235,200,133,1)"},"error_y":{"color":"rgba(235,200,133,1)"},"error_x":{"color":"rgba(235,200,133,1)"},"line":{"color":"rgba(235,200,133,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[27.3132600391591],"y":[-1.77094242348173],"mode":"markers","type":"scatter","name":"Teenage Anxiety Boulevard","marker":{"color":"rgba(231,197,143,1)","line":{"color":"rgba(231,197,143,1)"}},"textfont":{"color":"rgba(231,197,143,1)"},"error_y":{"color":"rgba(231,197,143,1)"},"error_x":{"color":"rgba(231,197,143,1)"},"line":{"color":"rgba(231,197,143,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-15.6083337308087],"y":[-2.79289039487246],"mode":"markers","type":"scatter","name":"Too Late To Love","marker":{"color":"rgba(226,195,150,1)","line":{"color":"rgba(226,195,150,1)"}},"textfont":{"color":"rgba(226,195,150,1)"},"error_y":{"color":"rgba(226,195,150,1)"},"error_x":{"color":"rgba(226,195,150,1)"},"line":{"color":"rgba(226,195,150,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[3.3834397851264],"y":[0.792904885501408],"mode":"markers","type":"scatter","name":"Walk Like Jesus","marker":{"color":"rgba(219,192,155,1)","line":{"color":"rgba(219,192,155,1)"}},"textfont":{"color":"rgba(219,192,155,1)"},"error_y":{"color":"rgba(219,192,155,1)"},"error_x":{"color":"rgba(219,192,155,1)"},"line":{"color":"rgba(219,192,155,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[3.34348603615335],"y":[-0.450944438239485],"mode":"markers","type":"scatter","name":"Walk Like Jesus - Live","marker":{"color":"rgba(213,190,159,1)","line":{"color":"rgba(213,190,159,1)"}},"textfont":{"color":"rgba(213,190,159,1)"},"error_y":{"color":"rgba(213,190,159,1)"},"error_x":{"color":"rgba(213,190,159,1)"},"line":{"color":"rgba(213,190,159,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-35.6587844845355],"y":[-1.69742555025376],"mode":"markers","type":"scatter","name":"What Are We","marker":{"color":"rgba(207,188,163,1)","line":{"color":"rgba(207,188,163,1)"}},"textfont":{"color":"rgba(207,188,163,1)"},"error_y":{"color":"rgba(207,188,163,1)"},"error_x":{"color":"rgba(207,188,163,1)"},"line":{"color":"rgba(207,188,163,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-21.6602007045887],"y":[1.18252429743892],"mode":"markers","type":"scatter","name":"Who the Hell","marker":{"color":"rgba(200,186,167,1)","line":{"color":"rgba(200,186,167,1)"}},"textfont":{"color":"rgba(200,186,167,1)"},"error_y":{"color":"rgba(200,186,167,1)"},"error_x":{"color":"rgba(200,186,167,1)"},"line":{"color":"rgba(200,186,167,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[73.4277383110391],"y":[-0.596391576067337],"mode":"markers","type":"scatter","name":"Who the Hell - Live","marker":{"color":"rgba(193,183,171,1)","line":{"color":"rgba(193,183,171,1)"}},"textfont":{"color":"rgba(193,183,171,1)"},"error_y":{"color":"rgba(193,183,171,1)"},"error_x":{"color":"rgba(193,183,171,1)"},"line":{"color":"rgba(193,183,171,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[-21.707854542424],"y":[0.429428947535203],"mode":"markers","type":"scatter","name":"Who the Hell, Vol. 2","marker":{"color":"rgba(186,181,175,1)","line":{"color":"rgba(186,181,175,1)"}},"textfont":{"color":"rgba(186,181,175,1)"},"error_y":{"color":"rgba(186,181,175,1)"},"error_x":{"color":"rgba(186,181,175,1)"},"line":{"color":"rgba(186,181,175,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[11.4895844222162],"y":[0.439262360222898],"mode":"markers","type":"scatter","name":"Without U","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"textfont":{"color":"rgba(179,179,179,1)"},"error_y":{"color":"rgba(179,179,179,1)"},"error_x":{"color":"rgba(179,179,179,1)"},"line":{"color":"rgba(179,179,179,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,-0.0310370974029459],"y":[0,-0.00382507227166792],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(148,103,189,1)","line":{"color":"rgba(148,103,189,1)"}},"error_y":{"color":"rgba(148,103,189,1)"},"error_x":{"color":"rgba(148,103,189,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,0.0170042592775909],"y":[0,-0.0969130046042912],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(140,86,75,1)","line":{"color":"rgba(140,86,75,1)"}},"error_y":{"color":"rgba(140,86,75,1)"},"error_x":{"color":"rgba(140,86,75,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,0.134243861659083],"y":[0,-1.7202021724493],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(227,119,194,1)","line":{"color":"rgba(227,119,194,1)"}},"error_y":{"color":"rgba(227,119,194,1)"},"error_x":{"color":"rgba(227,119,194,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,0.0180035697851047],"y":[0,0.00484049463053636],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(127,127,127,1)","line":{"color":"rgba(127,127,127,1)"}},"error_y":{"color":"rgba(127,127,127,1)"},"error_x":{"color":"rgba(127,127,127,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,-0.0100123339041962],"y":[0,0.0665656552431529],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(188,189,34,1)","line":{"color":"rgba(188,189,34,1)"}},"error_y":{"color":"rgba(188,189,34,1)"},"error_x":{"color":"rgba(188,189,34,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,-2.50871591327726e-05],"y":[0,-1.4004281240276e-05],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(23,190,207,1)","line":{"color":"rgba(23,190,207,1)"}},"error_y":{"color":"rgba(23,190,207,1)"},"error_x":{"color":"rgba(23,190,207,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,0.00126734070735985],"y":[0,-0.02605269403808],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,0.00589492434880267],"y":[0,-0.0702342848392098],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,23.7611853034208],"y":[0,0.00981918424420247],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0,-0.0391509772273263],"y":[0,-0.00425826648434461],"type":"scatter","mode":"lines","line":{"color":"black"},"showlegend":false,"marker":{"color":"rgba(214,39,40,1)","line":{"color":"rgba(214,39,40,1)"}},"error_y":{"color":"rgba(214,39,40,1)"},"error_x":{"color":"rgba(214,39,40,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>According to the principal component analysis, songs that are high in
+acousticness, speechiness, and instrumentalness are grouped towards the
+positive y-direction. Songs with high danceability, energy, valence,
+liveness, and loudness are grouped towards the negative y-direction.
+Songs with high tempo are grouped towards the positive x-direction while
+those with low tempo are grouped towards the negative x-direction.
+Looking at the plot, a song like “Who the Hell” is high in tempo while
+“Message to the Old Me” is low in tempo. A song like “Too Late To Love”
+is high in loudness with an average tempo.</p>
+</div>
+<div id="anxiety-boulevard-analyzed" class="section level2">
+<h2>Anxiety Boulevard Analyzed</h2>
+<p>I will take a deeper look at ISA’s latest EP – Anxiety Boulevard:</p>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="10%" />
+<col width="11%" />
+<col width="11%" />
+<col width="27%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Track Name</th>
+<th align="right">Energy</th>
+<th align="right">Valence</th>
+<th align="right">Tempo</th>
+<th align="right">Duration (Minutes)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">BLEED</td>
+<td align="right">0.427</td>
+<td align="right">0.924</td>
+<td align="right">102.981</td>
+<td align="right">2.13</td>
+</tr>
+<tr class="even">
+<td align="left">Nobody Said</td>
+<td align="right">0.816</td>
+<td align="right">0.826</td>
+<td align="right">154.047</td>
+<td align="right">3.05</td>
+</tr>
+<tr class="odd">
+<td align="left">Teenage Anxiety Boulevard</td>
+<td align="right">0.690</td>
+<td align="right">0.595</td>
+<td align="right">143.985</td>
+<td align="right">2.54</td>
+</tr>
+<tr class="even">
+<td align="left">Girl You Lost</td>
+<td align="right">0.571</td>
+<td align="right">0.611</td>
+<td align="right">125.039</td>
+<td align="right">2.85</td>
+</tr>
+<tr class="odd">
+<td align="left">Happy Again</td>
+<td align="right">0.318</td>
+<td align="right">0.353</td>
+<td align="right">85.364</td>
+<td align="right">3.21</td>
+</tr>
+<tr class="even">
+<td align="left">Message to the old me</td>
+<td align="right">0.607</td>
+<td align="right">0.601</td>
+<td align="right">77.510</td>
+<td align="right">3.47</td>
+</tr>
+</tbody>
+</table>
+<div id="htmlwidget-2dd3ca0fb9d9d0514d71" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2dd3ca0fb9d9d0514d71">{"x":{"visdat":{"afc08b581ae":["function () ","plotlyVisDat"]},"cur_data":"afc08b581ae","attrs":{"afc08b581ae":{"x":{},"y":{},"mode":"markers","marker":{"color":"red"},"name":"Energy","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"afc08b581ae.1":{"x":{},"y":{},"mode":"markers","marker":{"color":"gold"},"name":"Valence","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":""},"yaxis":{"domain":[0,1],"automargin":true,"title":"","type":"category","categoryorder":"array","categoryarray":["BLEED","Girl You Lost","Happy Again","Message to the old me","Nobody Said","Teenage Anxiety Boulevard"]},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.427,0.816,0.69,0.571,0.318,0.607],"y":["BLEED","Nobody Said","Teenage Anxiety Boulevard","Girl You Lost","Happy Again","Message to the old me"],"mode":"markers","marker":{"color":"red","line":{"color":"rgba(31,119,180,1)"}},"name":"Energy","type":"scatter","error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[0.924,0.826,0.595,0.611,0.353,0.601],"y":["BLEED","Nobody Said","Teenage Anxiety Boulevard","Girl You Lost","Happy Again","Message to the old me"],"mode":"markers","marker":{"color":"gold","line":{"color":"rgba(255,127,14,1)"}},"name":"Valence","type":"scatter","error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>According to the analysis, “Nobody Said” has the highest energy and
+tempo while “BLEED” is the happiest song. On the other hand, “Happy
+Again” is, ironically, the least happy song on the EP.</p>
+<p>I also plotted the energy and valence levels for each song on the EP.
+It is interesting to note that “BLEED” has a very high valence but low
+energy.</p>
+<p>A big thank you to <a
+href="https://github.com/charlie86/spotifyr">spotifyr</a> for making
+this analysis possible.</p>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p><a
+href="https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404#"
+class="uri">https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404#</a>:~:text=Valence%3A%20Describes%20the%20musical%20positiveness,sad%2C%20depressed%2C%20angry).<a
+href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
