@@ -16,9 +16,10 @@ library(purrr)
 library(tidyquant)
 library(plotly)
 library(lubridate)
+library(kableExtra)
 ```
 
-## Using [spotifyr](https://github.com/charlie86/spotifyr) to analyze an ISA's Spotify catalogue.
+## Using [spotifyr](https://github.com/charlie86/spotifyr) to analyze ISA's Spotify catalogue.
 
 Here is some exploratory analysis I will be running on my favorite artist's Spotify discography (updated November 2022). ISA (Isa Tengblad) is an independent Swedish recording artist. As the page is still quite new, I will be periodically creating updates.
 
@@ -129,6 +130,28 @@ pc_figure %>% hide_legend()
 ```
 
 According to the principal component analysis, songs that are high in acousticness, speechiness, and instrumentalness are grouped towards the positive y-direction. Songs with high danceability, energy, valence, liveness, and loudness are grouped towards the negative y-direction. Songs with high tempo are grouped towards the positive x-direction while those with low tempo are grouped towards the negative x-direction. Looking at the plot, a song like "Who the Hell" is high in tempo while "Message to the Old Me" is low in tempo. A song like "Too Late To Love" is high in loudness with an average tempo.
+
+## What Makes an ISA Song Popular?
+
+As an independent artist, ISA is likely curious about what makes her songs popular. I will run multiple linear regression to determine how danceability, energy, valence, and tempo relate to her song popularity. A couple things to note: at the moment, we only have information for ISA's top 10 most popular songs, which means this regression result may not be generalizable to her entire discography. Additionally, I am only looking at the U.S. market (some of ISA's older songs are not available in this market).
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(jtools)
+
+ISA_top = get_artist_top_tracks('25TgcWHKIx5DuoHjECQC2s') %>%
+  rename("track_name" = name)
+
+merged_ISA = merge(ISA_top, ISA, by = "track_name", all.x = TRUE) %>%
+  select(track_name, popularity, danceability, energy, valence, tempo)
+
+isa_regression <- lm(popularity ~ danceability + energy + valence + tempo, data = merged_ISA)
+
+summ(isa_regression)
+```
+
+From the multiple linear regression, we find a very significant valence predictor. We also have significant danceability and energy predictors (all at the $\alpha$ = 0.05 level). This means the following: there is a strongly significant negative relationship between valence and popularity, a significant positive relationship between energy and popularity, and a significant positive realtionship between danceability and popularity.
+
+From these findings, it can be suggested that ISA should continue releasing sad but high-energy and danceable songs as those factors appear to have a relationship with popularity.
 
 ## Anxiety Boulevard Analyzed
 
