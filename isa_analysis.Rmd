@@ -21,7 +21,7 @@ library(kableExtra)
 
 ## Using [spotifyr](https://github.com/charlie86/spotifyr) to analyze ISA's Spotify catalogue.
 
-Here is some exploratory analysis I will be running on my favorite artist's Spotify discography (updated November 2022). ISA (Isa Tengblad) is an independent Swedish recording artist. As the page is still quite new, I will be periodically creating updates.
+Here is some exploratory analysis I will be running on my favorite artist's Spotify discography (updated November 2022). [ISA](https://open.spotify.com/artist/25TgcWHKIx5DuoHjECQC2s?si=Z7KuHJfeTSeGN-UpgzUS3Q) (Isa Tengblad) is an independent Swedish recording artist. As the page is still quite new, I will be periodically creating updates.
 
 ## ISA's Happiest and Saddest Songs
 
@@ -155,7 +155,7 @@ From these findings, it can be suggested that ISA should continue releasing sad 
 
 ## Anxiety Boulevard Analyzed
 
-I will take a deeper look at ISA's latest EP -- Anxiety Boulevard:
+I will take a deeper look at ISA's latest EP -- [Anxiety Boulevard](https://open.spotify.com/album/3m9ytG7DZJqbbDIs8duHqA?si=E7NhaMe8Rb6aLoeJcQojug):
 ```{r, echo = FALSE}
 anxiety_boulevard = ISA %>%
   filter(album_name == "Anxiety Boulevard") 
