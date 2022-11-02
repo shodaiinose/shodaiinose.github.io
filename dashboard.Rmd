@@ -3,7 +3,7 @@ title: "Dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: fill
+    vertical_layout: scroll
     source_code: embed
 ---
 ```{css my-style, echo = FALSE}
@@ -23,6 +23,7 @@ data("instacart")
 ```
 Visualizations {data-icon="fa-signal"}
 ===================================== 
+
 ### Chart A
 
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
@@ -39,9 +40,6 @@ frozen_instacart %>%
       x = ~product_name, y = ~n, color = ~product_name, type = "bar", colors = "viridis") %>%
   layout(title = 'What Frozen Foods New Yorkers are Ordering?', xaxis = list(title = "Product"), yaxis = list(title = "Count")) %>% hide_legend()
 ```
-
-Column {data-width=350}
------------------------------------------------------------------------
 
 ### Chart B
 
@@ -64,6 +62,14 @@ plot_ly(data = frozen_instacart_time, x = ~order_hour_of_day, y = ~count, color 
 
 ```
 
+### Chart D
+
+```{r, echo = FALSE, warning = FALSE}
+plot_ly(frozen_instacart_time, y = ~order_hour_of_day, color = ~product_name, type = "box") %>%
+  layout(
+    title = 'When Are New Yorkers Ordering Their Favorite Frozen Foods?', yaxis = list(title = "Hour (Military Time)"), xaxis = list(title = "Product Name"))
+```
+
 About {data-icon="fa-info"}
 =====================================   
 ### Introduction
@@ -72,5 +78,5 @@ These dashboards are analyzing “The Instacart Online Grocery Shopping Dataset 
 
 The aim is to identify frequently ordered frozen products and discover any purchase patterns.
 
-Note: this analysis is only looking at products that had over 400 purchases in the timeframe.
+Note: this analysis only looks at products that had over 400 purchases in the time frame.
 
